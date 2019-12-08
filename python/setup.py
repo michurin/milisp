@@ -7,4 +7,5 @@ setup(
     author='Alexey Michurin',
     author_email='a.michurin@gmail.com',
     packages=['milisp'],
+    package_dir={'': 'src'}
 )

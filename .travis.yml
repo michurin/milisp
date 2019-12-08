@@ -8,7 +8,6 @@ matrix:
         - pip install -U pip
         - pip install -U pytest
         - pip install pytest-cov
-        - pip install codecov
         - cd python
       install:
         - pip install .
