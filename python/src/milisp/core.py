@@ -60,10 +60,6 @@ def recursive_descent(tz):
         while True:
             x = recursive_descent(tz)
             if x is BREAK:
-                if len(c) == 0:
-                    raise LispError('Empty list')
-                if type(c[0]) is not Symbol:
-                    raise LispError('First token have to be Symbol: %r' % c[0])
                 return c
             c.append(x)
     elif ch is END:
