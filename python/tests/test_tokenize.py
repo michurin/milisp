@@ -25,5 +25,5 @@ def test_comment():
     assert t == ['A']
 
 def test_invalid_token():
-    with pytest.raises(Exception):
+    with pytest.raises(core.LispError):
         list(core.tokenize('A\\'))

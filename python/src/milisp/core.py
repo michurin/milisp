@@ -8,6 +8,8 @@ Symbol = type('Symbol', (str,), {})
 BEGIN = type('Begin', (object,), {'__repr__': lambda x: 'Begin'})()
 END = type('End', (object,), {'__repr__': lambda x: 'End'})()
 
+class LispError(Exception): pass
+
 def tokenize(text):
     pos = 0
     while True:
@@ -16,7 +18,7 @@ def tokenize(text):
             break
         m = PSEUDOTOKEN.match(text, pos)
         if m is None:
-            raise Exception('Symbols ...%s' % text[pos:])
+            raise LispError('Symbols ...%s' % text[pos:])
         t = m.group()
         pos = m.end()
         f = t[0]
@@ -45,11 +47,11 @@ def parse(text):
         next(tz) # it has to raise StopIteration
     except StopIteration:
         if ast is None:
-            raise Exception('Unexpected end of file')
+            raise LispError('Unexpected end of file')
         if ast is BREAK:
-            raise Exception('Extra ")"')
+            raise LispError('Extra ")"')
         return ast
-    raise Exception('File too long')
+    raise LispError('File too long')
 
 def recursive_descent(tz):
     ch = next(tz)
@@ -59,9 +61,9 @@ def recursive_descent(tz):
             x = recursive_descent(tz)
             if x is BREAK:
                 if len(c) == 0:
-                    raise Exception('Empty list')
+                    raise LispError('Empty list')
                 if type(c[0]) is not Symbol:
-                    raise Exception('First token have to be Symbol: %r' % c[0])
+                    raise LispError('First token have to be Symbol: %r' % c[0])
                 return c
             c.append(x)
     elif ch is END:

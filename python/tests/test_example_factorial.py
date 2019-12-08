@@ -27,7 +27,6 @@ def test_factorial_loop():
         for i in range(int(first), int(last)+1):
             env[var_name] = float(i)
             mi.evaluate(env, expr[4])
-
     env = {
         'prog': prog_op,
         'set': set_op,
