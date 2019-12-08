@@ -4,8 +4,14 @@ matrix:
       python:
         - "3.8"
       before_install:
+        - python --version
+        - pip install -U pip
+        - pip install -U pytest
+        - pip install codecov
         - cd python
       install:
         - pip install .
       script:
-        - pytest -vv tests
+        - pytest -vv --cov=milisp tests
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
