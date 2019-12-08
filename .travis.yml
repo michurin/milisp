@@ -1,0 +1,11 @@
+matrix:
+  include:
+    - language: python
+      python:
+        - "3.8"
+      before_install:
+        - cd python
+      install:
+        - pip install --user .
+      script:
+        - pytest -vv tests
