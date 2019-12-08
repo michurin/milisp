@@ -3,7 +3,7 @@ import milisp as mi
 # Implement math variant of operations: vector, and, in
 
 def math_vector_op(env, expr):
-    return list(mi.evaluate(env, e) for e in expr[1:])
+    return list(float(mi.evaluate(env, e)) for e in expr[1:])
 
 def math_and_op(env, expr):
     return any(bool(mi.evaluate(env, e)) for e in expr[1:]) # lazy in Python3
@@ -64,7 +64,7 @@ def test_calc():
         'phoneAreaCode': '3',
     }
     res = mi.evaluate({**math_ops, **consts, **data}, prog)
-    assert res == [False, True, False]
+    assert res == [0.0, 1.0, 0.0]
 
 def test_sql():
     prog = mi.parse(text)

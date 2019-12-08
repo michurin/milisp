@@ -42,7 +42,7 @@ def test_factorial_recursion():
     text = '''
     (prog
         (def "F" "x" (if_gt_one   # if x > 1 then F(x-1) else 1
-            "x"
+            x
             (* x (call "F" (+ x -1)))
             1
         ))
@@ -60,7 +60,7 @@ def test_factorial_recursion():
         localenv[argname] = mi.evaluate(env, expr[2])
         return mi.evaluate(localenv, funcbody)
     def if_gt_one_op(env, expr):
-        if env[mi.evaluate(env, expr[1])] > 1.:
+        if mi.evaluate(env, expr[1]) > 1.:
             return mi.evaluate(env, expr[2])
         return mi.evaluate(env, expr[3])
     def plus_op(env, expr):
