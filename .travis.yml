@@ -6,6 +6,6 @@ matrix:
       before_install:
         - cd python
       install:
-        - pip install --user .
+        - pip install .
       script:
         - pytest -vv tests
