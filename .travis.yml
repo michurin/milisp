@@ -21,6 +21,6 @@ matrix:
       before_install:
         - cd go
       script:
-        - go test -coverprofile=coverage.txt -covermode=atomic ./milisp/...
+        - go test -v -coverprofile=coverage.txt -covermode=atomic ./milisp/...
       after_success:
         - bash <(curl -s https://codecov.io/bash)
