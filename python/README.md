@@ -1,9 +1,32 @@
 Micro Lisp
 ==========
 
-[![Build Status](https://travis-ci.com/michurin/milisp.svg?branch=master)](https://travis-ci.com/michurin/milisp)
-[![codecov](https://codecov.io/gh/michurin/milisp/branch/master/graph/badge.svg)](https://codecov.io/gh/michurin/milisp)
+The python part of [milisp](..) project.
 
-```
+Installation
+------------
+
+```sh
 pip install 'git+https://github.com/michurin/milisp#subdirectory=python'
 ```
+
+Contributing
+------------
+
+```sh
+pip install pylint
+pip install pytest
+pip install pytest-cov
+```
+
+```sh
+PYTHONPATH=src pytest --cov=milisp tests
+PYTHONPATH=src pylint --variable-rgx='.*' --argument-rgx='.*' milisp
+```
+
+Todo
+----
+
+- Decorators for debugging
+- Decorators for caching
+- Docstrings
