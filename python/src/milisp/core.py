@@ -8,7 +8,8 @@ Symbol = type('Symbol', (str,), {})
 BEGIN = type('Begin', (object,), {'__repr__': lambda x: 'Begin'})()
 END = type('End', (object,), {'__repr__': lambda x: 'End'})()
 
-class LispError(Exception): pass
+class LispError(Exception):
+    pass
 
 def tokenize(text):
     pos = 0
