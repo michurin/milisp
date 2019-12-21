@@ -1,7 +1,7 @@
 Micro Lisp
 ==========
 
-The python part of [milisp](..) project.
+The python part of [milisp](https://github.com/michurin/milisp) project.
 
 Installation
 ------------
