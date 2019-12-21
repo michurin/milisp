@@ -2,16 +2,20 @@ import milisp as mi
 
 # Implement math variant of operations: vector, and, in
 
+
 def math_vector_op(env, expr):
     return list(float(mi.evaluate(env, e)) for e in expr[1:])
 
+
 def math_and_op(env, expr):
-    return any(bool(mi.evaluate(env, e)) for e in expr[1:]) # lazy in Python3
+    return any(bool(mi.evaluate(env, e)) for e in expr[1:])  # lazy in Python3
+
 
 def math_in_op(env, expr):
     pattern = mi.evaluate(env, expr[1])
     lst = mi.evaluate(env, expr[2])
     return pattern in lst
+
 
 math_ops = {
     'vector': math_vector_op,
@@ -21,14 +25,26 @@ math_ops = {
 
 # Implement SQL variant of the same operations
 
+
 def sql_vector_op(env, expr):
-    return 'select\n' + ',\n'.join('  ' + mi.evaluate(env, e) for e in expr[1:]) + '\nfrom\n  hive.events as log;'
+    return ''.join((
+        'select\n',
+        ',\n'.join('  ' + mi.evaluate(env, e) for e in expr[1:]),
+        '\nfrom\n  hive.events as log;'))
+
 
 def sql_and_op(env, expr):
     return ' and '.join(mi.evaluate(env, e) for e in expr[1:])
 
+
 def sql_in_op(env, expr):
-    return '(' + mi.evaluate(env, expr[1]) + ' in (' + ', '.join(map(repr, mi.evaluate(env, expr[2]))) + '))'
+    return ''.join((
+        '(',
+        mi.evaluate(env, expr[1]),
+        ' in (',
+        ', '.join(map(repr, mi.evaluate(env, expr[2]))),
+        '))'))
+
 
 sql_ops = {
     'vector': sql_vector_op,
@@ -57,6 +73,7 @@ text = '''
 )
 '''
 
+
 def test_calc():
     prog = mi.parse(text)
     data = {
@@ -65,6 +82,7 @@ def test_calc():
     }
     res = mi.evaluate({**math_ops, **consts, **data}, prog)
     assert res == [0.0, 1.0, 0.0]
+
 
 def test_sql():
     prog = mi.parse(text)

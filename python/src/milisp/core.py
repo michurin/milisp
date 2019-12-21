@@ -8,8 +8,10 @@ Symbol = type('Symbol', (str,), {})
 BEGIN = type('Begin', (object,), {'__repr__': lambda x: 'Begin'})()
 END = type('End', (object,), {'__repr__': lambda x: 'End'})()
 
+
 class LispError(Exception):
     pass
+
 
 def tokenize(text):
     pos = 0
@@ -38,14 +40,16 @@ def tokenize(text):
         if r is not None:
             yield r
 
+
 BREAK = object()
+
 
 def parse(text):
     tz = iter(tokenize(text))
     ast = None
     try:
         ast = recursive_descent(tz)
-        next(tz) # it has to raise StopIteration
+        next(tz)  # it has to raise StopIteration
     except StopIteration:
         if ast is None:
             raise LispError('Unexpected end of file')
@@ -53,6 +57,7 @@ def parse(text):
             raise LispError('Extra ")"')
         return ast
     raise LispError('File too long')
+
 
 def recursive_descent(tz):
     ch = next(tz)
@@ -68,10 +73,11 @@ def recursive_descent(tz):
     else:
         return ch
 
+
 def evaluate(env, ast):
-    if type(ast) is list:
+    if type(ast) is list:  # pylint: disable=unidiomatic-typecheck
         v = env[ast[0]]
         return v(env, ast)
-    if type(ast) is Symbol:
+    if type(ast) is Symbol:  # pylint: disable=unidiomatic-typecheck
         return env[ast]
-    return ast # type(ast) in (float, str)
+    return ast  # type(ast) in (float, str)

@@ -1,12 +1,15 @@
 import milisp as mi
 
+
 def prog_op(env, expr):
     for e in expr[1:]:
         r = mi.evaluate(env, e)
     return r
 
+
 def mul_op(env, expr):
     return mi.evaluate(env, expr[1]) * mi.evaluate(env, expr[2])
+
 
 def test_factorial_loop():
     text = '''
@@ -18,8 +21,10 @@ def test_factorial_loop():
         x                     # return x
     )
     '''
+
     def set_op(env, expr):
         env[mi.evaluate(env, expr[1])] = mi.evaluate(env, expr[2])
+
     def loop_op(env, expr):
         var_name = mi.evaluate(env, expr[1])
         first = mi.evaluate(env, expr[2])
@@ -38,6 +43,7 @@ def test_factorial_loop():
     res = mi.evaluate(env, prog)
     assert res == 120.
 
+
 def test_factorial_recursion():
     text = '''
     (prog
@@ -49,20 +55,24 @@ def test_factorial_recursion():
         (call "F" N)
     )
     '''
+
     def def_op(env, expr):
         env[mi.evaluate(env, expr[1])] = (
             mi.evaluate(env, expr[2]),
             expr[3]
         )
+
     def call_op(env, expr):
         argname, funcbody = env[mi.evaluate(env, expr[1])]
-        localenv = env.copy() # shallow copy if enough for our purpose
+        localenv = env.copy()  # shallow copy if enough for our purpose
         localenv[argname] = mi.evaluate(env, expr[2])
         return mi.evaluate(localenv, funcbody)
+
     def if_gt_one_op(env, expr):
         if mi.evaluate(env, expr[1]) > 1.:
             return mi.evaluate(env, expr[2])
         return mi.evaluate(env, expr[3])
+
     def plus_op(env, expr):
         return mi.evaluate(env, expr[1]) + mi.evaluate(env, expr[2])
     env = {
