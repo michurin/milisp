@@ -8,8 +8,8 @@ import (
 
 func evalAllReturnLastResult(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
 	res := interface{}(nil)
-	err := error(nil)
 	for _, e := range expr[1:] { // check len in real life
+		var err error
 		res, err = e.Eval(env)
 		if err != nil {
 			return nil, err
@@ -87,8 +87,8 @@ func ifGtOne(env milisp.Environment, expr []milisp.Expression) (interface{}, err
 	if err != nil {
 		return nil, err
 	}
-	res := interface{}(nil)
-	if value > 1. {
+	var res interface{}
+	if value > 1. { // example of laziness, we don't evaluate unnecessary argument
 		res, err = expr[2].Eval(env)
 	} else {
 		res, err = expr[3].Eval(env)
