@@ -6,10 +6,10 @@ import (
 	"github.com/michurin/milisp/go/milisp"
 )
 
-func opVector(env milisp.Env, expr []milisp.Expression) (interface{}, error) {
+func opVector(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
 	result := make([]float64, len(expr)-1) // you are free to use float32, that more native for many boosting tools
 	for i := 0; i < len(expr)-1; i++ {
-		r, err := milisp.EvalFloat(expr[i+1], env)
+		r, err := milisp.EvalFloat(env, expr[i+1])
 		if err != nil {
 			return nil, err
 		}
@@ -18,7 +18,7 @@ func opVector(env milisp.Env, expr []milisp.Expression) (interface{}, error) {
 	return result, nil
 }
 
-func opAnd(env milisp.Env, expr []milisp.Expression) (interface{}, error) {
+func opAnd(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
 	for i := 0; i < len(expr)-1; i++ {
 		r, err := expr[i+1].Eval(env)
 		if err != nil {
@@ -31,8 +31,8 @@ func opAnd(env milisp.Env, expr []milisp.Expression) (interface{}, error) {
 	return true, nil
 }
 
-func opIn(env milisp.Env, expr []milisp.Expression) (interface{}, error) {
-	val, err := milisp.EvalString(expr[1], env)
+func opIn(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
+	val, err := milisp.EvalString(env, expr[1])
 	if err != nil {
 		return nil, err
 	}
@@ -49,14 +49,14 @@ func opIn(env milisp.Env, expr []milisp.Expression) (interface{}, error) {
 	return false, nil
 }
 
-func opSetStringList(env milisp.Env, expr []milisp.Expression) (interface{}, error) {
-	varName, err := milisp.EvalString(expr[1], env)
+func opSetStringList(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
+	varName, err := milisp.EvalString(env, expr[1])
 	if err != nil {
 		return nil, err
 	}
 	list := make([]string, len(expr)-2)
 	for i, e := range expr[2:] { // check
-		list[i], err = milisp.EvalString(e, env)
+		list[i], err = milisp.EvalString(env, e)
 		if err != nil {
 			return nil, err
 		}
@@ -65,7 +65,11 @@ func opSetStringList(env milisp.Env, expr []milisp.Expression) (interface{}, err
 	return nil, nil
 }
 
-func ExampleFeaturesUsingConstants() {
+// Simplest example how to calculate ML vector from raw features
+// using one-hot encode approach.
+func Example_oneHotFeaturesWithConstants() {
+	// simplest expressions for one-hot encode the categorical features
+	// this code have to be attached to model as meta
 	text := `
 	(vector
 	    (and (in phoneCountryCode UK) (in phoneAreaCode LDN))
@@ -77,14 +81,14 @@ func ExampleFeaturesUsingConstants() {
 		"vector": milisp.OpFunc(opVector),
 		"and":    milisp.OpFunc(opAnd),
 		"in":     milisp.OpFunc(opIn),
-		// const
+		// constants (we use custom type without any limitations)
 		"UK":  []string{"+44"},
 		"IL":  []string{"+972"},
 		"RU":  []string{"+7"},
 		"LDN": []string{"020"},
 		"TLV": []string{"3"},
 		"MSK": []string{"095", "495"},
-		// data
+		// data (raw features values; we have to substitute corresponding input on every run prediction)
 		"phoneCountryCode": "+44",
 		"phoneAreaCode":    "020",
 	}
@@ -96,10 +100,12 @@ func ExampleFeaturesUsingConstants() {
 	// Output: [1 0 0]
 }
 
-// The same, but we set constants from program too. I could be attached to
-// model as well as transformation operations. And here is example
-// how to apply number of programs to one context.
-func ExampleFeaturesWithoutConstants() {
+// It's not uncommon when you need convey some constants as part
+// of training/predicting pipeline. You can use lisp code to
+// initialize environment once. And then you are free to reuse
+// this context multiply times.
+func Example_oneHotFeaturesWithConstantsAsModelAttr() {
+	// one-run program to initialize constants in env
 	textConsts := `
 	(prog
 		(set_str_list "UK" "+44")
@@ -110,6 +116,7 @@ func ExampleFeaturesWithoutConstants() {
 		(set_str_list "MSK" "095" "495")
 	)
 	`
+	// simplest expressions for one-hot encode the categorical features
 	text := `
 	(vector
 	    (and (in phoneCountryCode UK) (in phoneAreaCode LDN))

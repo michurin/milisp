@@ -12,7 +12,7 @@ func (e expr) String() string {
 	return fmt.Sprintf("%s@%d:%d", e.expr, e.line, e.pos)
 }
 
-func (e expr) Eval(env Env) (interface{}, error) {
+func (e expr) Eval(env Environment) (interface{}, error) {
 	if len(e.expr) == 0 {
 		return nil, fmt.Errorf("empty expression")
 	}

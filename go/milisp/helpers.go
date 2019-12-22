@@ -5,7 +5,8 @@ import (
 	"strconv"
 )
 
-func EvalFloat(e Expression, env Env) (float64, error) {
+// EvalFloat is a shortcut for Exec + cast to float.
+func EvalFloat(env Environment, e Expression) (float64, error) {
 	if e == nil {
 		return 0, fmt.Errorf("nil interface")
 	}
@@ -21,9 +22,8 @@ func EvalFloat(e Expression, env Env) (float64, error) {
 	case bool:
 		if v {
 			return 1, nil
-		} else {
-			return 0, nil
 		}
+		return 0, nil
 	case string:
 		f, err := strconv.ParseFloat(v, 64)
 		if err != nil {
@@ -35,7 +35,8 @@ func EvalFloat(e Expression, env Env) (float64, error) {
 	}
 }
 
-func EvalString(e Expression, env Env) (string, error) {
+// EvalString is a shortcut for Exec + cast to string.
+func EvalString(env Environment, e Expression) (string, error) {
 	if e == nil {
 		return "", fmt.Errorf("nil interface")
 	}
@@ -51,8 +52,9 @@ func EvalString(e Expression, env Env) (string, error) {
 	}
 }
 
-func EvalCode(env Env, text string) (interface{}, error) {
-	p, err := Prog(text)
+// EvalCode is a shortcut for Compile+Eval. Useful if you want to execute code just once.
+func EvalCode(env Environment, text string) (interface{}, error) {
+	p, err := Compile(text)
 	if err != nil {
 		return nil, err
 	}

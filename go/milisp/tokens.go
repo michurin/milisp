@@ -22,7 +22,7 @@ func (t universalToken) String() string {
 	return fmt.Sprintf("%s:%s@%d:%d", []string{"SYM", "NUM", "STR", "BEG", "END"}[t.tp], t.str, t.line, t.pos)
 }
 
-func (t universalToken) Eval(env Env) (interface{}, error) {
+func (t universalToken) Eval(env Environment) (interface{}, error) {
 	switch t.tp {
 	case tpSymbol:
 		x, ok := env[t.str]

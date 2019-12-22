@@ -1,17 +1,22 @@
 package milisp
 
-type Env map[string]interface{}
+// Environment define the scope of execution: variables and operations
+type Environment map[string]interface{}
 
+// Expression is only block of program. Everything is expression
 type Expression interface {
-	Eval(Env) (interface{}, error)
+	Eval(Environment) (interface{}, error)
 }
 
+// Operation is a user defined thing that evaluate expression
 type Operation interface {
-	Perform(Env, []Expression) (interface{}, error)
+	Perform(Environment, []Expression) (interface{}, error)
 }
 
-type OpFunc func(Env, []Expression) (interface{}, error)
+// OpFunc is a helper type to use function as Operation interface
+type OpFunc func(Environment, []Expression) (interface{}, error)
 
-func (f OpFunc) Perform(e Env, expr []Expression) (interface{}, error) {
+// Perform operation function
+func (f OpFunc) Perform(e Environment, expr []Expression) (interface{}, error) {
 	return f(e, expr)
 }

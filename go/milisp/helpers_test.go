@@ -2,13 +2,14 @@ package milisp_test
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/michurin/milisp/go/milisp"
 )
 
 func TestEvalFloat(t *testing.T) {
-	expr, err := milisp.Prog("X")
+	expr, err := milisp.Compile("X")
 	if err != nil {
 		t.Error(err)
 	}
@@ -34,7 +35,7 @@ func TestEvalFloat(t *testing.T) {
 			if c.set {
 				env["X"] = c.val
 			}
-			f, err := milisp.EvalFloat(c.expr, env)
+			f, err := milisp.EvalFloat(env, c.expr)
 			if c.isError {
 				if err == nil {
 					t.Failed()
@@ -52,7 +53,7 @@ func TestEvalFloat(t *testing.T) {
 }
 
 func TestEvalString(t *testing.T) {
-	expr, err := milisp.Prog("X")
+	expr, err := milisp.Compile("X")
 	if err != nil {
 		t.Error(err)
 	}
@@ -74,7 +75,7 @@ func TestEvalString(t *testing.T) {
 			if c.set {
 				env["X"] = c.val
 			}
-			s, err := milisp.EvalString(c.expr, env)
+			s, err := milisp.EvalString(env, c.expr)
 			if c.isError {
 				if err == nil {
 					t.Failed()
@@ -91,7 +92,7 @@ func TestEvalString(t *testing.T) {
 	}
 }
 
-func TestEvalCode(t *testing.T) {
+func TestEvalCodeErrors(t *testing.T) { // all OK flows are covered by TestEval<Type>
 	env := map[string]interface{}{}
 	for _, text := range []string{
 		")",  // parse error
@@ -108,4 +109,30 @@ func TestEvalCode(t *testing.T) {
 			}
 		})
 	}
+}
+
+func ExampleEvalString_evalConcat() {
+	e, err := milisp.Compile(`(concat "A" (concat VAR "Q") "B")`)
+	if err != nil {
+		panic(err)
+	}
+	env := map[string]interface{}{
+		"concat": milisp.OpFunc(func(env milisp.Environment, e []milisp.Expression) (interface{}, error) {
+			s := make([]string, len(e)-1)
+			for i, x := range e[1:] {
+				s[i], err = milisp.EvalString(env, x)
+				if err != nil {
+					return nil, err
+				}
+			}
+			return "<" + strings.Join(s, ",") + ">", nil
+		}),
+		"VAR": "P",
+	}
+	result, err := milisp.EvalString(env, e)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(result)
+	// Output: <A,<P,Q>,B>
 }

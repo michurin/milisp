@@ -2,9 +2,9 @@ package milisp
 
 import "fmt"
 
-func parse(tokens []universalToken, pos int) (Expression, int, error, bool) {
+func parse(tokens []universalToken, pos int) (Expression, int, bool, error) {
 	if pos >= len(tokens) {
-		return nil, 0, fmt.Errorf("unexpected end of file"), true
+		return nil, 0, true, fmt.Errorf("unexpected end of file")
 	}
 	firstToken := tokens[pos]
 	switch firstToken.tp {
@@ -15,25 +15,25 @@ func parse(tokens []universalToken, pos int) (Expression, int, error, bool) {
 		var finish bool
 		pos++
 		for {
-			e, pos, err, finish = parse(tokens, pos)
+			e, pos, finish, err = parse(tokens, pos)
 			if err != nil {
-				return nil, 0, err, true
+				return nil, 0, true, err
 			}
 			if finish {
 				return expr{
 					expr: ee,
 					line: firstToken.line,
 					pos:  firstToken.pos,
-				}, pos + 1, nil, false
+				}, pos + 1, false, nil
 			}
 			if pos >= len(tokens) {
-				return nil, 0, fmt.Errorf("unexpected end of file; can not end expr started at %s", firstToken), true
+				return nil, 0, true, fmt.Errorf("unexpected end of file; can not end expr started at %s", firstToken)
 			}
 			ee = append(ee, e)
 		}
 	case tpClose:
-		return nil, pos, nil, true // pos will be shifted on call side
+		return nil, pos, true, nil // pos will be shifted on call side
 	default:
-		return firstToken, pos + 1, nil, false
+		return firstToken, pos + 1, false, nil
 	}
 }

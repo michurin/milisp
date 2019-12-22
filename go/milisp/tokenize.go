@@ -43,7 +43,7 @@ func tokenize(text string) ([]universalToken, error) {
 	pos := 0
 	tokens := []universalToken(nil)
 	chars := []rune(nil)
-	op := opNop
+	var op int
 	startLine := line
 	startPos := pos
 	for _, ch := range text + "\x1b" {
