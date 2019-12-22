@@ -7,6 +7,23 @@ import (
 	"github.com/michurin/milisp/go/milisp"
 )
 
+func ExampleEnvironment_oneAtomPrograms() {
+	prOk := func(result interface{}, err error) {
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(result)
+	}
+	emptyEnv := map[string]interface{}{"X": "VALUE_OF_X"}
+	prOk(milisp.EvalCode(emptyEnv, "X"))   // symbol: value will be taken from environment
+	prOk(milisp.EvalCode(emptyEnv, `"X"`)) // string
+	prOk(milisp.EvalCode(emptyEnv, "1"))   // float
+	// Output:
+	// VALUE_OF_X
+	// X
+	// 1
+}
+
 func ExampleEnvironment_symbolErrors() {
 	prErr := func(_ interface{}, err error) {
 		if err == nil {
