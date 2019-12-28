@@ -1,16 +1,19 @@
 import re
 from os.path import join
+
 from setuptools import setup
 
 MOD_NAME = 'milisp'
 SRC_DIR = 'src'
 
+
 def find_version():
     version_file = open(join(SRC_DIR, MOD_NAME, '__init__.py'), 'r').read()
-    version_match = re.search(r'''^__version__ = ['"]([^'"]+)['"]''', version_file, re.M)
+    version_match = re.search(r"""^__version__ = ['"]([^'"]+)['"]""", version_file, re.M)
     if version_match:
         return version_match.group(1)
     raise RuntimeError('Unable to find version string.')
+
 
 setup(
     name=MOD_NAME,
