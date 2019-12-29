@@ -1,27 +1,9 @@
 import pytest
+
 import milisp
 
 
-def test_empty():
+@pytest.mark.parametrize('p', ('', '(a', '(a))', ')'))
+def test_invalid_progs(p):
     with pytest.raises(milisp.LispError):
-        list(milisp.parse(''))
-
-
-def test_a():
-    t = list(milisp.parse('(a)'))
-    assert t == ['a']
-
-
-def test_noclosed():
-    with pytest.raises(milisp.LispError):
-        list(milisp.parse('(a'))
-
-
-def test_overclosed():
-    with pytest.raises(milisp.LispError):
-        list(milisp.parse('(a))'))
-
-
-def test_invalidclosed():
-    with pytest.raises(milisp.LispError):
-        list(milisp.parse(')'))
+        list(milisp.parse(p))

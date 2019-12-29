@@ -76,8 +76,9 @@ def recursive_descent(tz):
 
 def evaluate(env, ast):
     if type(ast) is list:  # pylint: disable=unidiomatic-typecheck
-        v = env[ast[0]]
-        return v(env, ast)
+        if len(ast) == 0:
+            return None
+        return evaluate(env, ast[0])(env, ast[1:])
     if type(ast) is Symbol:  # pylint: disable=unidiomatic-typecheck
         return env[ast]
     return ast  # type(ast) in (float, str)
