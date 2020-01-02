@@ -6,7 +6,7 @@ import (
 	"github.com/michurin/milisp/go/milisp"
 )
 
-func Example_AllExpressionTypes() {
+func Example_allExpressionTypes() {
 	// simple operation: sum all arguments
 	opSumAll := milisp.OpFunc(func(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
 		x := float64(0)
