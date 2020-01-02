@@ -6,10 +6,10 @@ import (
 	"github.com/michurin/milisp/go/milisp"
 )
 
-func opVector(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	result := make([]float64, len(expr)-1) // you are free to use float32, that more native for many boosting tools
-	for i := 0; i < len(expr)-1; i++ {
-		r, err := milisp.EvalFloat(env, expr[i+1])
+func opVector(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	result := make([]float64, len(args)) // you are free to use float32, that more native for many boosting tools
+	for i, a := range args {
+		r, err := milisp.EvalFloat(env, a)
 		if err != nil {
 			return nil, err
 		}
@@ -18,9 +18,9 @@ func opVector(env milisp.Environment, expr []milisp.Expression) (interface{}, er
 	return result, nil
 }
 
-func opAnd(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	for i := 0; i < len(expr)-1; i++ {
-		r, err := expr[i+1].Eval(env)
+func opAnd(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	for _, a := range args {
+		r, err := a.Eval(env)
 		if err != nil {
 			return nil, err
 		}
@@ -31,12 +31,12 @@ func opAnd(env milisp.Environment, expr []milisp.Expression) (interface{}, error
 	return true, nil
 }
 
-func opIn(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	val, err := milisp.EvalString(env, expr[1])
+func opIn(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	val, err := milisp.EvalString(env, args[0])
 	if err != nil {
 		return nil, err
 	}
-	rawList, err := expr[2].Eval(env)
+	rawList, err := args[1].Eval(env)
 	if err != nil {
 		return nil, err
 	}
@@ -49,14 +49,14 @@ func opIn(env milisp.Environment, expr []milisp.Expression) (interface{}, error)
 	return false, nil
 }
 
-func opSetStringList(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	varName, err := milisp.EvalString(env, expr[1])
+func opSetStringList(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	varName, err := milisp.EvalString(env, args[0])
 	if err != nil {
 		return nil, err
 	}
-	list := make([]string, len(expr)-2)
-	for i, e := range expr[2:] { // check
-		list[i], err = milisp.EvalString(env, e)
+	list := make([]string, len(args)-1)
+	for i, a := range args[1:] { // check
+		list[i], err = milisp.EvalString(env, a)
 		if err != nil {
 			return nil, err
 		}
@@ -76,7 +76,7 @@ func Example_oneHotFeaturesWithConstants() {
 	    (and (in phoneCountryCode IL) (in phoneAreaCode TLV))
 	    (and (in phoneCountryCode RU) (in phoneAreaCode MSK))
     )`
-	env := map[string]interface{}{
+	env := milisp.Environment{
 		// functions
 		"vector": milisp.OpFunc(opVector),
 		"and":    milisp.OpFunc(opAnd),
@@ -123,7 +123,7 @@ func Example_oneHotFeaturesWithConstantsAsModelAttr() {
 	    (and (in phoneCountryCode IL) (in phoneAreaCode TLV))
 	    (and (in phoneCountryCode RU) (in phoneAreaCode MSK))
     )`
-	env := map[string]interface{}{
+	env := milisp.Environment{
 		// functions
 		"vector":       milisp.OpFunc(opVector),
 		"and":          milisp.OpFunc(opAnd),

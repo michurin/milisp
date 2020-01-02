@@ -10,7 +10,7 @@ func TestImpossibleCase(t *testing.T) {
 		line: 0,
 		pos:  0,
 	}
-	r, err := u.Eval(map[string]interface{}{})
+	r, err := u.Eval(Environment{})
 	if r != nil {
 		t.Failed()
 	}

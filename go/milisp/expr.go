@@ -14,7 +14,7 @@ func (e expr) String() string {
 
 func (e expr) Eval(env Environment) (interface{}, error) {
 	if len(e.expr) == 0 {
-		return nil, fmt.Errorf("empty expression")
+		return nil, nil
 	}
 	op, err := e.expr[0].Eval(env)
 	if err != nil {
@@ -24,7 +24,7 @@ func (e expr) Eval(env Environment) (interface{}, error) {
 	if !ok {
 		return nil, fmt.Errorf("operation %T not executable: %s", op, e.expr[0])
 	}
-	res, err := operation.Perform(env, e.expr)
+	res, err := operation.Perform(env, e.expr[1:])
 	if err != nil {
 		return nil, err
 	}

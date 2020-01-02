@@ -5,18 +5,18 @@ type Environment map[string]interface{}
 
 // Expression is only block of program. Everything is expression
 type Expression interface {
-	Eval(Environment) (interface{}, error)
+	Eval(env Environment) (interface{}, error)
 }
 
 // Operation is a user defined thing that evaluate expression
 type Operation interface {
-	Perform(Environment, []Expression) (interface{}, error)
+	Perform(env Environment, args []Expression) (interface{}, error)
 }
 
 // OpFunc is a helper type to use function as Operation interface
-type OpFunc func(Environment, []Expression) (interface{}, error)
+type OpFunc func(env Environment, args []Expression) (interface{}, error)
 
 // Perform operation function
-func (f OpFunc) Perform(e Environment, expr []Expression) (interface{}, error) {
-	return f(e, expr)
+func (f OpFunc) Perform(env Environment, args []Expression) (interface{}, error) {
+	return f(env, args)
 }

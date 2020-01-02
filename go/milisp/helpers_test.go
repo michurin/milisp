@@ -31,7 +31,7 @@ func TestEvalFloat(t *testing.T) {
 	} {
 		c := c
 		t.Run(fmt.Sprintf("%v-%f", c.val, c.num), func(t *testing.T) {
-			env := map[string]interface{}{}
+			env := milisp.Environment{}
 			if c.set {
 				env["X"] = c.val
 			}
@@ -71,7 +71,7 @@ func TestEvalString(t *testing.T) {
 	} {
 		c := c
 		t.Run(fmt.Sprintf("%v-%s", c.val, c.str), func(t *testing.T) {
-			env := map[string]interface{}{}
+			env := milisp.Environment{}
 			if c.set {
 				env["X"] = c.val
 			}
@@ -93,7 +93,7 @@ func TestEvalString(t *testing.T) {
 }
 
 func TestEvalCodeErrors(t *testing.T) { // all OK flows are covered by TestEval<Type>
-	env := map[string]interface{}{}
+	env := milisp.Environment{}
 	for _, text := range []string{
 		")",  // parse error
 		"()", // runtime error
@@ -112,15 +112,15 @@ func TestEvalCodeErrors(t *testing.T) { // all OK flows are covered by TestEval<
 }
 
 func ExampleEvalString_evalConcat() {
-	e, err := milisp.Compile(`(concat "A" (concat VAR "Q") "B")`)
+	expr, err := milisp.Compile(`(concat "A" (concat VAR "Q") "B")`)
 	if err != nil {
 		panic(err)
 	}
-	env := map[string]interface{}{
-		"concat": milisp.OpFunc(func(env milisp.Environment, e []milisp.Expression) (interface{}, error) {
-			s := make([]string, len(e)-1)
-			for i, x := range e[1:] {
-				s[i], err = milisp.EvalString(env, x)
+	env := milisp.Environment{
+		"concat": milisp.OpFunc(func(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+			s := make([]string, len(args))
+			for i, a := range args {
+				s[i], err = milisp.EvalString(env, a)
 				if err != nil {
 					return nil, err
 				}
@@ -129,7 +129,7 @@ func ExampleEvalString_evalConcat() {
 		}),
 		"VAR": "P",
 	}
-	result, err := milisp.EvalString(env, e)
+	result, err := milisp.EvalString(env, expr)
 	if err != nil {
 		panic(err)
 	}

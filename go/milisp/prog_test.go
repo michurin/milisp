@@ -14,11 +14,11 @@ func ExampleCompile_validSyntax() {
 		"(A(X Y)A)",
 		"((X Y))",
 	} {
-		prog, err := milisp.Compile(text)
+		expr, err := milisp.Compile(text)
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(prog)
+		fmt.Println(expr)
 	}
 	// Output:
 	// SYM:A@1:1
@@ -35,8 +35,8 @@ func ExampleCompile_invalidSyntax() {
 		"(",
 		"(()",
 	} {
-		prog, err := milisp.Compile(text)
-		if err == nil || prog != nil {
+		expr, err := milisp.Compile(text)
+		if err == nil || expr != nil {
 			panic(text)
 		}
 		fmt.Println(err)

@@ -6,11 +6,11 @@ import (
 	"github.com/michurin/milisp/go/milisp"
 )
 
-func evalAllReturnLastResult(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
+func evalAllReturnLastResult(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
 	res := interface{}(nil)
-	for _, e := range expr[1:] { // check len in real life
+	for _, a := range args { // check len in real life
 		var err error
-		res, err = e.Eval(env)
+		res, err = a.Eval(env)
 		if err != nil {
 			return nil, err
 		}
@@ -18,13 +18,13 @@ func evalAllReturnLastResult(env milisp.Environment, expr []milisp.Expression) (
 	return res, nil
 }
 
-func mulAll(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	if len(expr) <= 1 { // command itself and at least one argument needed
-		return nil, fmt.Errorf("too few args: %s", expr)
+func mulAll(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	if len(args) < 1 {
+		return nil, fmt.Errorf("too few args: %s", args)
 	}
 	x := float64(1)
-	for _, e := range expr[1:] {
-		res, err := milisp.EvalFloat(env, e)
+	for _, a := range args {
+		res, err := milisp.EvalFloat(env, a)
 		if err != nil {
 			return nil, err
 		}
@@ -33,10 +33,10 @@ func mulAll(env milisp.Environment, expr []milisp.Expression) (interface{}, erro
 	return x, nil
 }
 
-func sumAll(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
+func sumAll(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
 	x := float64(0)
-	for _, e := range expr[1:] {
-		res, err := milisp.EvalFloat(env, e)
+	for _, a := range args {
+		res, err := milisp.EvalFloat(env, a)
 		if err != nil {
 			return nil, err
 		}
@@ -45,12 +45,12 @@ func sumAll(env milisp.Environment, expr []milisp.Expression) (interface{}, erro
 	return x, nil
 }
 
-func setVar(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	varName, err := milisp.EvalString(env, expr[1])
+func setVar(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	varName, err := milisp.EvalString(env, args[0])
 	if err != nil {
 		return nil, err
 	}
-	varValue, err := expr[2].Eval(env)
+	varValue, err := args[1].Eval(env)
 	if err != nil {
 		return nil, err
 	}
@@ -58,20 +58,20 @@ func setVar(env milisp.Environment, expr []milisp.Expression) (interface{}, erro
 	return nil, nil
 }
 
-func loop(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	varName, err := milisp.EvalString(env, expr[1])
+func loop(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	varName, err := milisp.EvalString(env, args[0])
 	if err != nil {
 		return nil, err
 	}
-	first, err := milisp.EvalFloat(env, expr[2])
+	first, err := milisp.EvalFloat(env, args[1])
 	if err != nil {
 		return nil, err
 	}
-	last, err := milisp.EvalFloat(env, expr[3])
+	last, err := milisp.EvalFloat(env, args[2])
 	if err != nil {
 		return nil, err
 	}
-	body := expr[4]
+	body := args[3]
 	for i := int(first); i <= int(last); i++ {
 		env[varName] = float64(i)
 		_, err = body.Eval(env)
@@ -82,16 +82,16 @@ func loop(env milisp.Environment, expr []milisp.Expression) (interface{}, error)
 	return nil, nil
 }
 
-func ifGtOne(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	value, err := milisp.EvalFloat(env, expr[1])
+func ifGtOne(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	value, err := milisp.EvalFloat(env, args[0])
 	if err != nil {
 		return nil, err
 	}
 	var res interface{}
 	if value > 1. { // example of laziness, we don't evaluate unnecessary argument
-		res, err = expr[2].Eval(env)
+		res, err = args[1].Eval(env)
 	} else {
-		res, err = expr[3].Eval(env)
+		res, err = args[2].Eval(env)
 	}
 	if err != nil {
 		return nil, err
@@ -104,33 +104,33 @@ type function struct {
 	body    milisp.Expression
 }
 
-func functionDefinition(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	funcName, err := milisp.EvalString(env, expr[1])
+func functionDefinition(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	funcName, err := milisp.EvalString(env, args[0])
 	if err != nil {
 		return nil, err
 	}
-	argName, err := milisp.EvalString(env, expr[2])
+	argName, err := milisp.EvalString(env, args[1])
 	if err != nil {
 		return nil, err
 	}
 	env[funcName] = function{
 		argName: argName,
-		body:    expr[3],
+		body:    args[2],
 	}
 	return nil, nil
 }
 
-func functionCall(env milisp.Environment, expr []milisp.Expression) (interface{}, error) {
-	funcName, err := milisp.EvalString(env, expr[1])
+func functionCall(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+	funcName, err := milisp.EvalString(env, args[0])
 	if err != nil {
 		return nil, err
 	}
-	argValue, err := expr[2].Eval(env)
+	argValue, err := args[1].Eval(env)
 	if err != nil {
 		return nil, err
 	}
 	f := env[funcName].(function) // check, check, check...
-	localEnv := map[string]interface{}{}
+	localEnv := milisp.Environment{}
 	for k, v := range env {
 		localEnv[k] = v
 	}
@@ -151,7 +151,7 @@ func Example_factorialLoop() {
 	    )
 	    x                     # return x
 	)`
-	env := map[string]interface{}{
+	env := milisp.Environment{
 		// take a look inside examples file for implementations
 		"prog": milisp.OpFunc(evalAllReturnLastResult),
 		"set":  milisp.OpFunc(setVar), // it shows how to create new variables in env
@@ -177,7 +177,7 @@ func Example_factorialRecursive() {
         ))
         (call "F" N)
     )`
-	env := map[string]interface{}{
+	env := milisp.Environment{
 		// take a look inside examples file for implementations
 		"prog":      milisp.OpFunc(evalAllReturnLastResult),
 		"set":       milisp.OpFunc(setVar),
