@@ -1,3 +1,5 @@
+import io
+
 import numpy as np
 
 import milisp as mi
@@ -172,6 +174,15 @@ def np_in_op(env, args):
 
 
 def main_calc_using_numpy():
+    text = """\
+            CountryCode   AreaCode
+                   +972          3
+                     +7        095
+                    +44        020
+                    +44        023
+                    +34        976
+    """
+    data = np.genfromtxt(io.StringIO(text), skip_header=1, dtype='|U4', autostrip=True)
     env = {
         'vector': np_vector_op,
         'and': np_and_op,
@@ -180,10 +191,7 @@ def main_calc_using_numpy():
         'set': np_set_op,
     }
     mi.evaluate(env, mi.parse(CODE_INIT))
-    env.update({  # whole input data in a format like pandas series
-        'phoneCountryCode': np.array(['+972', '+7', '+44', '+44', '+34']),
-        'phoneAreaCode': np.array(['3', '095', '020', '023', '976']),
-    })
+    env.update(zip(('phoneCountryCode', 'phoneAreaCode'), data.T))
     res = mi.evaluate(env, mi.parse(CODE_CALCULATE))  # process all data in one run using NumPy
     np.testing.assert_equal(res, [
         # LDN / TLV / MSK
