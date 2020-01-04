@@ -5,6 +5,7 @@ matrix:
         - "3.8"
       before_install:
         - python --version
+        - pip list
         - pip install -U pip
         - pip install -U pytest
         - pip install pytest-cov
@@ -12,6 +13,7 @@ matrix:
       install:
         - pip install .
       script:
+        - pytest -vv examples  # it is not true tests; just check examples are runable
         - pytest -vv --cov=milisp tests
       after_success:
         - bash <(curl -s https://codecov.io/bash)
