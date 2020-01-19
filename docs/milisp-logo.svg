@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" aria-label="Logo" width="565" height="94">
+    <title>milisp | https://github.com/michurin/milisp</title>
+    <defs>
+        <style>
+            @import url("https://fonts.googleapis.com/css?family=Montserrat:100,500");
+        </style>
+    </defs>
+    <style><![CDATA[
+        text {font-family:Montserrat; font-weight:500; fill:#000;}
+        #big {font-size:96px;}
+        #small {font-size:15px;}
+        tspan {font-weight:100; fill:#777;}
+    ]]></style>
+    <text id="big" x="1" y="72">MI<tspan>CRO</tspan>LISP</text>
+    <text id="small" x="10" y="90"><tspan>OR </tspan>M<tspan>ULTI-LANGUAGE </tspan>I<tspan>MPLEMENTATION OF THE </tspan>LISP<tspan>-LIKE LANGUAGE</tspan></text>
+</svg>
+
