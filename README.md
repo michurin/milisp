@@ -1,4 +1,4 @@
-# micro lisp or multi-language implementation of the lisp-like language
+# Micro LISP or multi-language implementation of the lisp-like language
 
 [![Build Status](https://travis-ci.com/michurin/milisp.svg?branch=master)](https://travis-ci.com/michurin/milisp)
 [![codecov](https://codecov.io/gh/michurin/milisp/branch/master/graph/badge.svg)](https://codecov.io/gh/michurin/milisp)
