@@ -28,22 +28,26 @@ static analysis.
 This implementation of LISP is very simple. The key points are:
 
 - Program is LISP expression
-- In contrast with many other implementations of LISP, the core doesn't precalculates arguments of operations. It leaves room for implementation lazy operation (see below)
-- There are only two build-in types: strings and floats. You are free to use any other types, using your custom *operations* and *environment* (see below)
+- In contrast with many other implementations of LISP,
+  the core doesn't precalculates arguments of operations.
+  It leaves room for implementation lazy operations (see below)
+- There are only two build-in types: strings and floats.
+  You are free to use any other types, using your custom *operations* and *environment* (see below)
 - There are no predefined operations. You implement all that you need
 
 ### Syntax
 
 This is all you have to know about this lisp:
 
-- Program consists solely of *expressions*. There is no statement/expression distinction. Atoms are expressions too.
+- Program consists solely of *expressions*. There is no statement/expression distinction.
+  Atoms are expressions too.
 - There are only a few types of expressions:
   - Atoms:
     - Constants:
-      - Numbers: `0`, `1`, `1.41`
+      - Numbers: `0`, `-1`, `2.718`
       - Strings (enclosed with double quotes): `""`, `"one"`, `"it is quote: \""`
     - Symbols: `A`, `B1`, `state_one`. They refer to instances in *environment* (see below)
-  - Expressions: a "(", followed by expressions, followed by a ")".
+  - Expressions: a `(`, followed by expressions, followed by a `)`.
     The first expression have to refer to operation (see below).
 
 Moreover, you can use python-style comments.
@@ -87,9 +91,12 @@ from milisp import evaluate as E, parse as P
 #   organize local scopes, caches, and other interesting things
 operation_plus = lambda env, args: sum(E(env, a) for a in args)
 
+# Lisp code obtained from ML model mata, settings, UI...
+lisp_code = '(+ x 2)'
+
 # Compile our code
 # We can do it once and reuse result
-root_expression = P('(+ x 2)')
+root_expression = P(lisp_code)
 
 # Setup environment
 # Pay attention:
@@ -111,33 +118,41 @@ print(result)
 
 ## Tips and tricks
 
-TODO
+### Where to find examples
 
-- Where to find examples
+- Python: [/python/examples](https://github.com/michurin/milisp/tree/master/python/examples)
+- Go: [GoDoc](https://godoc.org/github.com/michurin/milisp/go/milisp)
+
+### TODO
+
 - Simplest example
 - Lazy calculations
+- Caching results
 - Localize scope (environment)
 
-## Differences
+## Differences between implementations
 
-TODO
+### TODO
 
 - Parsers implementation
-- Numbers
+- Numbers: int precision, complex
 - Access to AST from operation implementation; don't tweak AST in Python side because you won't able to do it on the Go side.
 - Raw Python exception
 - Custom types may work differently. For example integers in Golang and in Python.
 
-## Contribute
-
-TODO
-
 ## FAQ
 
-TODO
+### TODO
 
 - This lisp doesn't support lists? quotes?
 - Support of other languages
 - Python2 support
 - Does this introduce any speed overhead?
 - Any helpers?
+
+## Contribute
+
+Pull requests are welcome.
+For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
