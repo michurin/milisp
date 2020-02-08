@@ -132,13 +132,38 @@ print(result)
 
 ## Differences between implementations
 
-### TODO
+### Parsers implementation
 
-- Parsers implementation
-- Numbers: int precision, complex
-- Access to AST from operation implementation; don't tweak AST in Python side because you won't able to do it on the Go side.
-- Raw Python exception
-- Custom types may work differently. For example integers in Golang and in Python.
+Both parsers try to do the same things. However, it is different implementations based on different approaches.
+Go parser is based on classic FSM with explicit STF. Python parser follows in the Python tradition
+and based on RE like `Lib/tokenize.py`. Both implementation have to provide the same
+result. If you find some differences, it is a bug (see note about numbers bellow). Please report it.
+
+### Parse numbers
+
+Parsers use languages buildin abbilities to parse numbers. Here we have some differences
+in behaviour. For example `1j` is valid number for Python, but is invalid number for Go.
+Please be careful.
+
+I beleve, it is better to keep parsers simple and fast than support strict numbers format.
+We can discuss it, if you wish.
+
+### Tweaking AST
+
+In Go implementation you can not reach raw AST, you can execute subtree only and obtain result.
+Python has powerful introspection, so you are able to rich raw AST from operation implementation.
+Please don't follow the temptation, don't abuse this abbility, don't use AST to keep
+complex data stractures, don't tweak AST, etc.
+
+### Raw Python exception
+
+Python implementation don't try to hide/wrap raw Python exceptions like `IndexError` and so on.
+I beleave it helps to keep code clear and minimalistic, and helps to locolise possible errors.
+
+### Custom types may work differently
+
+Just keep it in mind. Similar types have different implementations and beheviour in different languages.
+For example integers in Golang and in Python work in different ways.
 
 ## FAQ
 
