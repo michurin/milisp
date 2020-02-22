@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/michurin/milisp/branch/master/graph/badge.svg)](https://codecov.io/gh/michurin/milisp)
 [![Go Report Card](https://goreportcard.com/badge/github.com/michurin/milisp)](https://goreportcard.com/report/github.com/michurin/milisp)
 [![GoDoc](https://godoc.org/github.com/michurin/milisp/go/milisp?status.svg)](https://godoc.org/github.com/michurin/milisp/go/milisp)
+[![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/michurin/milisp/go/milisp)
 
 ## Backgrounds and motivations
 
@@ -29,7 +30,7 @@ This implementation of LISP is very simple. The key points are:
 
 - Program is LISP expression
 - In contrast with many other implementations of LISP,
-  the core doesn't precalculates arguments of operations.
+  the core doesn't precalculate arguments of operations.
   It leaves room for implementation lazy operations (see below)
 - There are only two build-in types: strings and floats.
   You are free to use any other types, using your custom *operations* and *environment* (see below)
@@ -73,7 +74,7 @@ an object is any value: float, string, some data with custom type or *operation*
 ### Operations and expressions
 
 *Operation* is a reference to code, that operates with arguments. In Python it is just
-callable boject. In Go it is an interface. Here is example on Python (Go flow is the same):
+callable object. In Go it is an interface. Here is example on Python (Go flow is the same):
 
 ```python
 from milisp import evaluate as E, parse as P
@@ -121,7 +122,7 @@ print(result)
 ### Where to find examples
 
 - Python: [/python/examples](https://github.com/michurin/milisp/tree/master/python/examples)
-- Go: [GoDoc](https://godoc.org/github.com/michurin/milisp/go/milisp)
+- Go: [docs on pkg.go.dev](https://pkg.go.dev/github.com/michurin/milisp/go/milisp)
 
 ### TODO
 
@@ -141,28 +142,28 @@ result. If you find some differences, it is a bug (see note about numbers bellow
 
 ### Parse numbers
 
-Parsers use languages buildin abbilities to parse numbers. Here we have some differences
+Parsers use languages buildin abilities to parse numbers. Here we have some differences
 in behaviour. For example `1j` is valid number for Python, but is invalid number for Go.
 Please be careful.
 
-I beleve, it is better to keep parsers simple and fast than support strict numbers format.
+I believe, it is better to keep parsers simple and fast than support strict numbers format.
 We can discuss it, if you wish.
 
 ### Tweaking AST
 
 In Go implementation you can not reach raw AST, you can execute subtree only and obtain result.
 Python has powerful introspection, so you are able to rich raw AST from operation implementation.
-Please don't follow the temptation, don't abuse this abbility, don't use AST to keep
-complex data stractures, don't tweak AST, etc.
+Please don't follow the temptation, don't abuse this ability, don't use AST to keep
+complex data structures, don't tweak AST, etc.
 
 ### Raw Python exception
 
 Python implementation don't try to hide/wrap raw Python exceptions like `IndexError` and so on.
-I beleave it helps to keep code clear and minimalistic, and helps to locolise possible errors.
+I believe it helps to keep code clear and minimalistic, and helps to localise possible errors.
 
 ### Custom types may work differently
 
-Just keep it in mind. Similar types have different implementations and beheviour in different languages.
+Just keep it in mind. Similar types have different implementations and behaviour in different languages.
 For example integers in Golang and in Python work in different ways.
 
 ## FAQ
