@@ -124,12 +124,52 @@ print(result)
 - Python: [/python/examples](https://github.com/michurin/milisp/tree/master/python/examples)
 - Go: [docs on pkg.go.dev](https://pkg.go.dev/github.com/michurin/milisp/go/milisp)
 
-### TODO
+In documentation you can find examples of
 
-- Simplest example
 - Lazy calculations
-- Caching results
+- Caching results (TODO, but it is easy to imagine looking at lazy calculations)
 - Localize scope (environment)
+
+### Simplest example
+
+You can find simplest Python example above.
+
+The same thing on go:
+
+```go
+package main
+
+import (
+        "fmt"
+
+        "github.com/michurin/milisp/go/milisp"
+)
+
+var sumOp = milisp.OpFunc(func(env milisp.Environment, args []milisp.Expression) (interface{}, error) {
+        x := float64(0)
+        for _, a := range args {
+                res, err := milisp.EvalFloat(env, a) // shortcut for Eval+cast
+                if err != nil {
+                        return nil, err
+                }
+                x += res
+        }
+        return x, nil
+})
+
+func main() {
+        text := "(+ x 2)" // LISP code
+        env := milisp.Environment{ // operations, constants, arguments
+                "+":  sumOp,
+                "x": 1.,
+        }
+        res, err := milisp.EvalCode(env, text) // shortcut for Compile+Eval
+        if err != nil {
+                panic(err)
+        }
+        fmt.Println(res) // 3
+}
+```
 
 ## Differences between implementations
 
@@ -168,11 +208,26 @@ For example integers in Golang and in Python work in different ways.
 
 ## FAQ
 
+### Support of other languages
+
+You are free to make pool request.
+
+### Does it support Python2?
+
+Not, it doesn't.
+If you really eager for Python2 support,
+you can fork this project and fix couple
+of characters.
+
+### This lisp doesn't support lists? quotes?
+
+Yes. You are free to use custom types
+and structures. Take a look at examples
+where NumPy arrays are used. However there are no
+complex types provided out of the box.
+
 ### TODO
 
-- This lisp doesn't support lists? quotes?
-- Support of other languages
-- Python2 support
 - Does this introduce any speed overhead?
 - Any helpers?
 
