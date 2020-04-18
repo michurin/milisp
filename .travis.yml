@@ -19,7 +19,7 @@ matrix:
         - bash <(curl -s https://codecov.io/bash)
     - language: go
       go:
-        - "1.13.x"
+        - "1.14.x"
       before_install:
         - cd go
       script:

@@ -1,3 +1,3 @@
 module github.com/michurin/milisp/go
 
-go 1.13
+go 1.14
