@@ -1,4 +1,4 @@
-# Micro LISP or multi-language implementation of the lisp-like language
+# 𝕄𝕚𝕃𝕚𝕤𝕡: Micro LISP or multi-language implementation of the lisp-like language
 
 [![Build Status](https://travis-ci.com/michurin/milisp.svg?branch=master)](https://travis-ci.com/michurin/milisp)
 [![codecov](https://codecov.io/gh/michurin/milisp/branch/master/graph/badge.svg)](https://codecov.io/gh/michurin/milisp)
@@ -10,19 +10,20 @@
 
 The goal of this project is to obtain a tool to express data transformation, share them and apply them
 in Python and Goland environments. For example, if you want to train your ML model in Python pipeline and
-have to apply it in Golang, you need to perform the same transformation in both environments.
+have to apply it in Golang application, you need to perform the same transformation of input in both environments
+to prepare features in a unified way.
 
 Moreover, it would be nice to attache these transformations to the model as a part of the data pipeline.
 Simple text lisp-like notation provides a powerful and convenient solution.
 
 You may write lisp expressions by hand, generate them from Python pipelines or from GUI-generated
-decision-tree-like structures.
+decision-tree-like structures. You are free to generate documentation based on lisp-like expressions.
 
 As far as we need only text notation, we are free to use lisp-like expression anywhere else:
 configuration files, settings and so on. We are free to join together expressions obtained from different sources
-and apply then consequently. Lisp expressions can be easily read and analyzed,
+and apply them consequently. Lisp expressions can be easily read and analyzed,
 written manually or generated from data structures or from source code, using introspection or even
-static analysis.
+static code analysis.
 
 ## Lisp and MiLisp introduction
 
@@ -64,7 +65,8 @@ These are valid expressions (with valid comments):
 ```
 
 Yes. This lisp supports natively only floats and strings.
-However, you are free to introduce your custom types and functions to process them.
+However, you are free to introduce your custom types (including NumPy arrays)
+and functions to process them.
 
 ### Environment, variables, operations
 
@@ -177,7 +179,7 @@ func main() {
 
 Both parsers try to do the same things. However, it is different implementations based on different approaches.
 Go parser is based on classic FSM with explicit STF. Python parser follows in the Python tradition
-and based on RE like `Lib/tokenize.py`. Both implementation have to provide the same
+and based on RE like `Lib/tokenize.py`. Both implementations have to provide the same
 result. If you find some differences, it is a bug (see note about numbers bellow). Please report it.
 
 ### Parse numbers
@@ -192,18 +194,20 @@ We can discuss it, if you wish.
 ### Tweaking AST
 
 In Go implementation you can not reach raw AST, you can execute subtree only and obtain result.
-Python has powerful introspection, so you are able to rich raw AST from operation implementation.
+Python has powerful introspection, so you are able to reach raw AST from operation implementation.
 Please don't follow the temptation, don't abuse this ability, don't use AST to keep
 complex data structures, don't tweak AST, etc.
 
-### Raw Python exception
+You can express all your ideas using (a) custom data types, (b) custom functions, (c) lisp expressions.
+
+### Raw Python exceptions
 
 Python implementation don't try to hide/wrap raw Python exceptions like `IndexError` and so on.
 I believe it helps to keep code clear and minimalistic, and helps to localise possible errors.
 
 ### Custom types may work differently
 
-Just keep it in mind. Similar types have different implementations and behaviour in different languages.
+Just keep it in mind. Similar types have different implementations, behaviours and limitations in different languages.
 For example integers in Golang and in Python work in different ways.
 
 ## FAQ
@@ -226,10 +230,16 @@ and structures. Take a look at examples
 where NumPy arrays are used. However there are no
 complex types provided out of the box.
 
-### TODO
+### Does it introduce run-time overhead?
 
-- Does this introduce any speed overhead?
-- Any helpers?
+It depends. Good design could eliminate almost all
+computational overhead. For example, you could
+use vector operations, you could use tools like NumPy,
+you could use approaches like MapReduce, finally,
+you could use lisp-like notation to generate SQL
+queries. Consider lisp-like language as
+a glue on top of operations implemented on native languages,
+libraries and solutions.
 
 ## Contribute
 
