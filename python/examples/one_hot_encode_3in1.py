@@ -6,14 +6,14 @@ import milisp as mi
 
 # This 3-in-1 example shows, how to use one common set of lisp expression (Ch.0) to:
 # - calculate vector with bare Python (Ch.1)
-# - generate SQL request (Ch.2)
+# - generate SQL request and perform all data tranformations on DB side (Ch.2)
 # - perfrom bulk calculations using NumPy (Ch.3)
 
 # ---- CHAPTER 0 ---------------------------------------------
 # Lisp code. The same for all examples
 # There are two parts of Lisp code:
-# - CODE_INIT - just for initializatin constants in enviroment
-# - CODE_CALCULATE - features expressions itselfs
+# - CODE_INIT - just for initializatin constants in enviroment, it could be keepd in configuration/settings storage
+# - CODE_CALCULATE - features expressions itselfs, it implements one-hot encoding of phone number
 
 CODE_INIT = """
 (exec
@@ -98,27 +98,16 @@ class SQLVectorOp:
         self.table_alias = table_alias
 
     def __call__(self, env, args):
-        return ''.join((
-            'select\n',
-            ',\n'.join('  ' + mi.evaluate(env, a) for a in args),
-            '\nfrom\n  ',
-            self.table_name,
-            ' as ',
-            self.table_alias,
-            ';'))
-
+        fields = ',\n'.join('  ' + mi.evaluate(env, a) for a in args)
+        return f'select\n{fields}\nfrom\n  {self.table_name} as {self.table_alias};'
 
 def sql_and_op(env, args):
     return ' and '.join(mi.evaluate(env, a) for a in args)
 
 
 def sql_in_op(env, args):
-    return ''.join((
-        '(',
-        mi.evaluate(env, args[0]),
-        ' in (',
-        ', '.join(map(repr, mi.evaluate(env, args[1]))),
-        '))'))
+    items = map(repr, mi.evaluate(env, args[1]))  # oh. repr is not the best way to quote strings, don't use this conde in prod
+    return f'({mi.evaluate(env, args[0])} in ({", ".join(items)}))'
 
 
 def main_prepare_sql_request():
