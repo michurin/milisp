@@ -195,6 +195,27 @@ def main_calc_using_numpy():
 
 
 def main():
+    '''
+    Full output:
+
+    ---- Ch.1 ----------------
+    [0.0, 1.0, 0.0]
+
+    ---- Ch.2 ----------------
+    select
+      (log.phone_country in ('+44')) and (log.phone_area in ('020')),
+      (log.phone_country in ('+972')) and (log.phone_area in ('3')),
+      (log.phone_country in ('+7')) and (log.phone_area in ('095', '495'))
+    from
+      hive."default".events as log;
+
+    ---- Ch.3 ----------------
+    [[0. 1. 0.]
+     [0. 0. 1.]
+     [1. 0. 0.]
+     [0. 0. 0.]
+     [0. 0. 0.]]
+    '''
     for i, f in enumerate((main_calc_one_vector_with_pure_python, main_prepare_sql_request, main_calc_using_numpy), start=1):
         print(f'\n---- Ch.{i} ----------------')
         f()
