@@ -162,7 +162,7 @@ var sumOp = milisp.OpFunc(func(env milisp.Environment, args []milisp.Expression)
 func main() {
         text := "(+ x 2)" // LISP code
         env := milisp.Environment{ // operations, constants, arguments
-                "+":  sumOp,
+                "+": sumOp,
                 "x": 1.,
         }
         res, err := milisp.EvalCode(env, text) // shortcut for Compile+Eval
