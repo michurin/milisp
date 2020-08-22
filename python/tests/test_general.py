@@ -1,2 +1,2 @@
 def test_tokens():
-    import milisp
+    import milisp  # pylint:disable=import-outside-toplevel,unused-import
