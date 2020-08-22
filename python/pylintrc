@@ -1,5 +1,5 @@
 [MASTER]
 
-disable=C0114,C0115,C0116
+disable=C0114,C0115,C0116,raise-missing-from
 argument-rgx=[a-z][a-z_0-9]*
 variable-rgx=[a-z][a-z_0-9]*

@@ -1,5 +1,8 @@
 """Just shallow check that examples are runable. Asserts in examples are naive and it is not qualitative test cases. Do not inclue this "tests" to codecov testset"""
 
+# false positive for f
+# pylint: disable=undefined-variable
+
 import glob
 from os.path import basename, dirname, isfile, join
 
