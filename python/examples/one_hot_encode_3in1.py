@@ -4,16 +4,19 @@ import numpy as np
 
 import milisp as mi
 
+
 # This 3-in-1 example shows, how to use one common set of lisp expression (Ch.0) to:
 # - calculate vector with bare Python (Ch.1)
 # - generate SQL request and perform all data tranformations on DB side (Ch.2)
 # - perfrom bulk calculations using NumPy (Ch.3)
+
 
 # ---- CHAPTER 0 ---------------------------------------------
 # Lisp code. The same for all examples
 # There are two parts of Lisp code:
 # - CODE_INIT - just for initializatin constants in enviroment, it could be keepd in configuration/settings storage
 # - CODE_CALCULATE - features expressions itselfs, it implements one-hot encoding of phone number
+
 
 CODE_INIT = """
 (exec
@@ -36,6 +39,7 @@ CODE_CALCULATE = """
 )
 """
 
+
 # ---- CHAPTER 1 ---------------------------------------------
 # Pure Python implementation. It calculates one vector per run.
 # Interesting points:
@@ -44,7 +48,7 @@ CODE_CALCULATE = """
 
 
 def pure_exec_op(env, args):
-    [mi.evaluate(env, a) for a in args]
+    [mi.evaluate(env, a) for a in args]  # pylint:disable=expression-not-assigned
 
 
 def pure_set_op(env, args):
@@ -84,6 +88,7 @@ def main_calc_one_vector_with_pure_python():
     assert res == [0.0, 1.0, 0.0]
     print(res)
 
+
 # ---- CHAPTER 2 ---------------------------------------------
 # Implement SQL variant of the same operations
 # Interesting points:
@@ -100,6 +105,7 @@ class SQLVectorOp:
     def __call__(self, env, args):
         fields = ',\n'.join('  ' + mi.evaluate(env, a) for a in args)
         return f'select\n{fields}\nfrom\n  {self.table_name} as {self.table_alias};'
+
 
 def sql_and_op(env, args):
     return ' and '.join(mi.evaluate(env, a) for a in args)
@@ -190,6 +196,7 @@ def main_calc_using_numpy():
         [0., 0., 0.],
         [0., 0., 0.]])
     print(res)
+
 
 # ---- M A I N -----------------------------------------------
 
