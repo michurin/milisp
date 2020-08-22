@@ -17,6 +17,7 @@ matrix:
         - pylint --rcfile pylintrc milisp
         - pylint --rcfile pylintrc tests/*
         - pylint --rcfile pylintrc-examples examples
+        - pylint misc/expr_builder.py
         - pytest -vv examples  # it is not true tests; just check examples are runable
         - pytest -vv --cov=milisp tests
       after_success:
