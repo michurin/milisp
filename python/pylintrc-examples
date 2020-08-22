@@ -1,0 +1,8 @@
+[MASTER]
+
+disable=C0114,C0115,C0116,duplicate-code
+max-line-length=200
+argument-rgx=[a-z][a-z_0-9]*
+variable-rgx=[a-z][a-z_0-9]*
+function-rgx=[a-z][a-z_0-9]*
+min-public-methods=1

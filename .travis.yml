@@ -7,12 +7,16 @@ matrix:
         - python --version
         - pip list
         - pip install -U pip
+        - pip install -U pylint
         - pip install -U pytest
-        - pip install pytest-cov
+        - pip install -U pytest-cov
         - cd python
       install:
         - pip install .
       script:
+        - pylint --rcfile pylintrc milisp
+        - pylint --rcfile pylintrc tests/*
+        - pylint --rcfile pylintrc-examples examples
         - pytest -vv examples  # it is not true tests; just check examples are runable
         - pytest -vv --cov=milisp tests
       after_success:

@@ -1,0 +1,5 @@
+[MASTER]
+
+disable=C0114,C0115,C0116
+argument-rgx=[a-z][a-z_0-9]*
+variable-rgx=[a-z][a-z_0-9]*
