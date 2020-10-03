@@ -5,6 +5,10 @@ import (
 	"strconv"
 )
 
+const opNop = 0
+
+// States, char classes and operations for tokenization FSM
+
 const (
 	sSpaces = iota
 	sString
@@ -12,7 +16,6 @@ const (
 	sCharAfterSlash
 	sComment
 	sStop
-	sError
 )
 
 const (
@@ -28,37 +31,58 @@ const (
 )
 
 const (
-	opNop      = 0
 	opNewToken = 1 << iota
 	opAppendChar
 	opSaveToken
 	opSaveQuotedToken
 	opOpenToken
 	opCloseToken
+	opStopOk
+	opErrorChar
+	opErrorEOF
+)
+
+// States, char classes and operations for positioning FSM
+
+const (
+	sCR = iota
+	sNL
+	sLine
+)
+
+const (
+	cCR = iota
+	cNL
+	cTab
+	cChar // including space
+)
+
+const (
+	opNewLine = iota + 1
+	opStepOne
+	opStepTab
 )
 
 func tokenize(text string) ([]universalToken, error) {
-	state := sSpaces
+	tokenState := sSpaces
+	lineState := sLine
 	line := 1
-	pos := 0
+	pos := 1
 	tokens := []universalToken(nil)
 	chars := []rune(nil)
 	var op int
 	startLine := line
 	startPos := pos
 	for _, ch := range text + "\x1b" {
-		if ch == 10 {
-			line++
-			pos = -1 // eliminate \n itself
-		}
-		pos++
-		tp := charType(ch)
-		state, op = stateTransitionFunction(state, tp)
-		if state == sError {
-			if tp == cEOF {
-				return nil, fmt.Errorf("unexpected EOF")
-			}
+		// classify char
+		tp, spTp := charType(ch)
+		// tokenization
+		tokenState, op = tokenizeStateTransitionFunction(tokenState, tp)
+		if op&opErrorChar > 0 {
 			return nil, fmt.Errorf("unexpected char %c at %d:%d", ch, line, pos)
+		}
+		if op&opErrorEOF > 0 {
+			return nil, fmt.Errorf("unexpected EOF")
 		}
 		if op&opNewToken > 0 {
 			startLine = line
@@ -112,14 +136,25 @@ func tokenize(text string) ([]universalToken, error) {
 				pos:  pos,
 			})
 		}
-		if state == sStop { // have to be at the end
+		if op&opStopOk > 0 { // have to be tha last operation
 			break
+		}
+		// find out position of next char
+		lineState, op = charPositionStateTransitionFunction(lineState, spTp)
+		switch op {
+		case opNewLine:
+			line++
+			pos = 1
+		case opStepOne:
+			pos++
+		case opStepTab:
+			pos += 8 - (pos-1)%8
 		}
 	}
 	return tokens, nil
 }
 
-func stateTransitionFunction(state int, symbol int) (int, int) {
+func tokenizeStateTransitionFunction(state int, symbol int) (int, int) {
 	switch state {
 	case sSpaces:
 		switch symbol {
@@ -134,10 +169,10 @@ func stateTransitionFunction(state int, symbol int) (int, int) {
 		case cQuote:
 			return sQuotedString, opNewToken
 		case cSlash:
-			return sError, opNop
+			return sStop, opErrorChar
 		case cEOF:
-			return sStop, opNop
-		default:
+			return sStop, opStopOk
+		case cOther:
 			return sString, opNewToken | opAppendChar
 		}
 	case sString:
@@ -149,10 +184,10 @@ func stateTransitionFunction(state int, symbol int) (int, int) {
 		case cBracketClose:
 			return sSpaces, opSaveToken | opCloseToken
 		case cQuote, cSlash, cCommentStart: // ["/#] couldn't be part of token
-			return sError, opNop
+			return sStop, opErrorChar
 		case cEOF:
-			return sStop, opSaveToken
-		default:
+			return sStop, opSaveToken | opStopOk
+		case cOther:
 			return sString, opAppendChar
 		}
 	case sQuotedString:
@@ -162,47 +197,99 @@ func stateTransitionFunction(state int, symbol int) (int, int) {
 		case cQuote:
 			return sSpaces, opSaveQuotedToken
 		case cEOF:
-			return sError, opNop
-		default: // cOther, cSpace, cBracketOpen/Close, sNewLine, cCommentStart
+			return sStop, opErrorEOF
+		case cOther, cSpace, cBracketOpen, cBracketClose, cNewLine, cCommentStart:
 			return sQuotedString, opAppendChar
 		}
 	case sCharAfterSlash:
 		switch symbol {
 		case cEOF:
-			return sError, opNop
-		default:
+			return sStop, opErrorEOF
+		case cSlash, cQuote, cOther, cSpace, cBracketOpen, cBracketClose, cNewLine, cCommentStart:
 			return sQuotedString, opAppendChar
 		}
-	default: // case sComment:
+	case sComment:
 		switch symbol {
 		case cNewLine:
 			return sSpaces, opNop
 		case cEOF:
-			return sStop, opNop
-		default:
+			return sStop, opStopOk
+		case cSlash, cQuote, cOther, cSpace, cBracketOpen, cBracketClose, cCommentStart:
 			return sComment, opNop
 		}
 	}
+	panic("impossible state")
 }
 
-func charType(ch rune) int {
-	switch ch {
-	case 10:
-		return cNewLine
-	case 9, 12, 13, 32:
-		return cSpace
-	case '(':
-		return cBracketOpen
-	case ')':
-		return cBracketClose
-	case '"':
-		return cQuote
-	case '\\':
-		return cSlash
-	case '#':
-		return cCommentStart
-	case 27:
-		return cEOF
+func charPositionStateTransitionFunction(state int, symbol int) (int, int) {
+	// According https://www.unicode.org/reports/tr14/tr14-32.html
+	// Long story short: valid newline combinations are \n, \r and \r\n:
+	// \n\n\n\n — 4 lines
+	// \r\r\r\r — 4 lines
+	// \r\n\r\n — 2 lines
+	// \n\r\n\r — 3 lines (\n + \r\n + \r)
+	// The special case is for \r only
+	// All \n, \xb, \xc etc. are interpreted in the same way.
+	switch state {
+	case sCR:
+		switch symbol {
+		case cCR:
+			return sCR, opNewLine
+		case cNL:
+			return sNL, opNop
+		case cTab:
+			return sLine, opStepTab
+		case cChar:
+			return sLine, opStepOne
+		}
+	case sNL:
+		switch symbol {
+		case cCR:
+			return sCR, opNewLine
+		case cNL:
+			return sNL, opNewLine
+		case cTab:
+			return sLine, opStepTab
+		case cChar:
+			return sLine, opStepOne
+		}
+	case sLine:
+		switch symbol {
+		case cCR:
+			return sCR, opNewLine
+		case cNL:
+			return sNL, opNewLine
+		case cTab:
+			return sLine, opStepTab
+		case cChar:
+			return sLine, opStepOne
+		}
 	}
-	return cOther
+	panic("impossible state")
+}
+
+func charType(ch rune) (int, int) {
+	switch ch {
+	case '\r':
+		return cNewLine, cCR
+	case '\n', 0xb, 0xc, 0x2028, 0x2029:
+		return cNewLine, cNL
+	case 0x9:
+		return cSpace, cTab
+	case 0x20:
+		return cSpace, cChar
+	case '(':
+		return cBracketOpen, cChar
+	case ')':
+		return cBracketClose, cChar
+	case '"':
+		return cQuote, cChar
+	case '\\':
+		return cSlash, cChar
+	case '#':
+		return cCommentStart, cChar
+	case 0x1b:
+		return cEOF, cChar
+	}
+	return cOther, cChar
 }
