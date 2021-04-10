@@ -1,0 +1,84 @@
+linters-settings:
+  lll:
+    line-length: 120
+  funlen:
+    lines: 100
+    statements: 60
+  cyclop:
+    max-complexity: 30
+linters:
+  disable-all: true
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exhaustive
+    - exportloopref
+    - funlen
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - golint
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - noctx
+    - nolintlint
+    - rowserrcheck
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
+      # disabled by default
+      # TODO: check desabled
+    - asciicheck
+    - cyclop
+    - durationcheck
+      # - errorlint
+      # - exhaustivestruct
+    - forbidigo
+    - forcetypeassert
+    - gci
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - godot
+    - godox
+      # - goerr113
+    - gofumpt
+    - goheader
+      # - gomnd
+    - gomoddirectives
+    - gomodguard
+    - ifshort
+    - importas
+    - makezero
+    - nestif
+    - nilerr
+      # - nlreturn
+      # - paralleltest
+    - prealloc
+    - predeclared
+    - revive
+    - sqlclosecheck
+      # - testpackage
+    - thelper
+    - tparallel
+    - wastedassign
+      # - wrapcheck
+      # - wsl
