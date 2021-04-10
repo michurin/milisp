@@ -2,7 +2,7 @@ package milisp
 
 import "fmt"
 
-// Compile text of lisp program to ready to run internal representation
+// Compile text of lisp program to ready to run internal representation.
 func Compile(text string) (Expression, error) {
 	tokens, err := tokenize(text)
 	if err != nil {
