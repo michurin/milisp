@@ -27,7 +27,9 @@ matrix:
         - "1.15"
       before_install:
         - cd go
+        - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.39.0
       script:
+        - golangci-lint run
         - go test -v -coverprofile=coverage.txt -covermode=atomic ./milisp/...
       after_success:
         - bash <(curl -s https://codecov.io/bash)
