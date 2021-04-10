@@ -40,7 +40,7 @@ func opIn(env milisp.Environment, args []milisp.Expression) (interface{}, error)
 	if err != nil {
 		return nil, err
 	}
-	list := rawList.([]string) // check
+	list := rawList.([]string) //nolint:forcetypeassert // do not forget to check here
 	for _, v := range list {
 		if v == val {
 			return true, nil

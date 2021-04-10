@@ -129,7 +129,7 @@ func functionCall(env milisp.Environment, args []milisp.Expression) (interface{}
 	if err != nil {
 		return nil, err
 	}
-	f := env[funcName].(function) // check, check, check...
+	f := env[funcName].(function) //nolint:forcetypeassert // do not forget to check here
 	localEnv := milisp.Environment{}
 	for k, v := range env {
 		localEnv[k] = v
@@ -169,14 +169,14 @@ func Example_factorialLoop() {
 
 func Example_factorialRecursive() {
 	text := `
-    (prog
-        (def "F" "x" (if_gt_one   # if x > 1 then F(x-1) else 1
-            x
-            (* x (call "F" (+ x -1)))
-            1
-        ))
-        (call "F" N)
-    )`
+	(prog
+	    (def "F" "x" (if_gt_one   # if x > 1 then F(x-1) else 1
+	        x
+	        (* x (call "F" (+ x -1)))
+	        1
+	    ))
+	    (call "F" N)
+	)`
 	env := milisp.Environment{
 		// take a look inside examples file for implementations
 		"prog":      milisp.OpFunc(evalAllReturnLastResult),
