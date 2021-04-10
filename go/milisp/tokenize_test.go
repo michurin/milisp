@@ -96,6 +96,7 @@ func TestTokenize_invalid(t *testing.T) {
 
 func assertPanicFSM(f func(int, int) (int, int)) func(t *testing.T) {
 	return func(t *testing.T) {
+		t.Helper()
 		defer func() {
 			if recover() == nil {
 				t.Error("The code did not panic")
