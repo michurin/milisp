@@ -1,0 +1,73 @@
+---
+name: test # this string appears on badge
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.17'
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Show go environment
+        run: go version
+      - name: Show python environment
+        run: |
+          python --version
+          pip --version
+          pip list
+
+      - name: Install python dev deps
+        run: |
+          pip install -U pylint
+          pip install -U pytest
+          pip install -U pytest-cov
+          pip install numpy # for examples test only
+
+      - name: Install python module
+        working-directory: python
+        run: pip install .
+
+      - name: Lint go
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: v1.42 # Required. Must be specified without patch version
+          working-directory: go
+      - name: Lint python core code
+        working-directory: python
+        run: pylint --rcfile pylintrc milisp
+      - name: Lint python tests
+        working-directory: python
+        run: pylint --rcfile pylintrc tests/*
+      - name: Lint python examples
+        working-directory: python
+        run: pylint --rcfile pylintrc-examples examples
+      - name: Lint python misc
+        working-directory: python
+        run: pylint --rcfile pylintrc misc/expr_builder.py
+
+      - name: Test go
+        working-directory: go
+        run: go test -v -coverprofile=coverage.txt -covermode=atomic ./milisp/...
+      - name: Test python
+        working-directory: python
+        run: pytest -vv --cov=milisp --cache-clear --cov-report=xml tests examples
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          files: go/coverage.txt,python/coverage.xml # comma-separated
+          verbose: true
