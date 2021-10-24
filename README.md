@@ -1,6 +1,6 @@
 # 𝕄𝕚𝕃𝕚𝕤𝕡: Micro LISP or multi-language implementation of the lisp-like language
 
-[![Build Status](https://travis-ci.com/michurin/milisp.svg?branch=master)](https://travis-ci.com/michurin/milisp)
+[![Build Status](https://github.com/michurin/milisp/actions/workflows/ci.yml/badge.svg)](https://github.com/michurin/milisp/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/michurin/milisp/branch/master/graph/badge.svg)](https://codecov.io/gh/michurin/milisp)
 [![Go Report Card](https://goreportcard.com/badge/github.com/michurin/milisp)](https://goreportcard.com/report/github.com/michurin/milisp)
 [![GoDoc](https://godoc.org/github.com/michurin/milisp/go/milisp?status.svg)](https://godoc.org/github.com/michurin/milisp/go/milisp)

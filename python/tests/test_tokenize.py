@@ -1,6 +1,6 @@
 import pytest
 
-import milisp.core as core
+from milisp import core
 
 
 def test_empty():
@@ -31,5 +31,6 @@ def test_comment():
 
 
 def test_invalid_token():
-    with pytest.raises(core.LispError):
+    with pytest.raises(core.LispError) as excinfo:
         list(core.tokenize('A\\'))
+    assert str(excinfo.value) == 'Unexpected symbols: "A<HERE>\\"'

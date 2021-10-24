@@ -21,7 +21,7 @@ def tokenize(text):
             break
         m = PSEUDOTOKEN.match(text, pos)
         if m is None:
-            raise LispError('Symbols ...%s' % text[pos:])
+            raise LispError('Unexpected symbols: "' + text[:pos] + '<HERE>' + text[pos:] + '"')
         t = m.group()
         pos = m.end()
         f = t[0]
