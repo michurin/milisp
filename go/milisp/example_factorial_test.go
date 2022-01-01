@@ -144,7 +144,7 @@ func functionCall(env milisp.Environment, args []milisp.Expression) (interface{}
 
 func Example_factorialLoop() {
 	text := `
-	(prog                     # execute all floowing expressions and return result of last
+	(prog                     # execute all following expressions and return result of last
 	    (set "x" 1)           # x = 1
 	    (loop "i" 1 N         # for i = 1; i <= N; i++
 	        (set "x" (* x i)) # x = x * i
