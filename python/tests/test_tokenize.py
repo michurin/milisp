@@ -5,7 +5,7 @@ from milisp import core
 
 def test_empty():
     t = list(core.tokenize(''))
-    assert t == []
+    assert t == []  # pylint:disable=use-implicit-booleaness-not-comparison # Lets use x == [..] like in other asserts
 
 
 def test_tokens():
