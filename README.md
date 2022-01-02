@@ -5,6 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/michurin/milisp)](https://goreportcard.com/report/github.com/michurin/milisp)
 [![GoDoc](https://godoc.org/github.com/michurin/milisp/go/milisp?status.svg)](https://godoc.org/github.com/michurin/milisp/go/milisp)
 [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/michurin/milisp/go/milisp)
+[![play.golang.org](https://shields.io/badge/go.dev-play-089?logo=go&logoColor=white&style=flat)](https://go.dev/play/p/dvWCBi-a9G4)
 
 ## Backgrounds and motivations
 
@@ -172,6 +173,8 @@ func main() {
         fmt.Println(res) // 3
 }
 ```
+
+You can [check and run this code snippet online](https://go.dev/play/p/dvWCBi-a9G4) at the Go playground.
 
 ## Differences between implementations
 
