@@ -3,7 +3,6 @@
 [![Build Status](https://github.com/michurin/milisp/actions/workflows/ci.yml/badge.svg)](https://github.com/michurin/milisp/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/michurin/milisp/branch/master/graph/badge.svg)](https://codecov.io/gh/michurin/milisp)
 [![Go Report Card](https://goreportcard.com/badge/github.com/michurin/milisp)](https://goreportcard.com/report/github.com/michurin/milisp)
-[![GoDoc](https://godoc.org/github.com/michurin/milisp/go/milisp?status.svg)](https://godoc.org/github.com/michurin/milisp/go/milisp)
 [![go.dev reference](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/michurin/milisp/go/milisp)
 [![play.golang.org](https://shields.io/badge/go.dev-play-089?logo=go&logoColor=white&style=flat)](https://go.dev/play/p/dvWCBi-a9G4)
 
