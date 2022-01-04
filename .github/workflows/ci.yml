@@ -26,16 +26,30 @@ jobs:
         run: go version
       - name: Show python environment
         run: |
+          echo '::group::python version'
           python --version
+          echo '::endgroup::'
+          echo '::group::pip version'
           pip --version
+          echo '::endgroup::'
+          echo '::group::pip list'
           pip list
+          echo '::endgroup::'
 
       - name: Install python dev deps
         run: |
+          echo '::group::install pylint'
           pip install -U pylint
+          echo '::endgroup::'
+          echo '::group::install pytest'
           pip install -U pytest
+          echo '::endgroup::'
+          echo '::group::install pytest-cov'
           pip install -U pytest-cov
+          echo '::endgroup::'
+          echo '::group::install numpy'
           pip install numpy # for examples test only
+          echo '::endgroup::'
 
       - name: Install python module
         working-directory: python
