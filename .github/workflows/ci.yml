@@ -58,7 +58,7 @@ jobs:
       - name: Lint go
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.42 # Required. Must be specified without patch version
+          version: v1.43 # Required. Must be specified without patch version
           working-directory: go
       - name: Lint python core code
         working-directory: python
