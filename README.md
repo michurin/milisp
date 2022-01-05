@@ -115,7 +115,7 @@ env = {
 # Evaluate our code
 result = E(env, root_expression)
 
-# Have to be (2+1j)
+# It will be (2+1j)
 print(result)
 ```
 
