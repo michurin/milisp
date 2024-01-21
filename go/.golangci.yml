@@ -10,8 +10,6 @@ linters:
   disable-all: true
   enable:
     - bodyclose
-    - deadcode
-    - depguard
     - dogsled
     - dupl
     - errcheck
@@ -36,13 +34,11 @@ linters:
     - revive
     - rowserrcheck
     - staticcheck
-    - structcheck
     - stylecheck
     - typecheck
     - unconvert
     - unparam
     - unused
-    - varcheck
     - whitespace
       # disabled by default
       # TODO: check desabled
@@ -52,7 +48,6 @@ linters:
       # - errorlint
       # - exhaustivestruct
     - forbidigo
-    - forcetypeassert
     - gci
     - gochecknoglobals
     - gochecknoinits
@@ -65,7 +60,6 @@ linters:
       # - gomnd
     - gomoddirectives
     - gomodguard
-    - ifshort
     - importas
     - makezero
     - nestif

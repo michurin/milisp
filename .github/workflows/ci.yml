@@ -57,9 +57,9 @@ jobs:
         run: pip install .
 
       - name: Lint go
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.43 # Required. Must be specified without patch version
+          version: v1.55 # Required. Must be specified without patch version
           working-directory: go
       - name: Lint python core code
         working-directory: python
